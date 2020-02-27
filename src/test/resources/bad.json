@@ -1,0 +1,31 @@
+{
+  "type": "guess",
+  "itemId": 0,
+  "playerId": "${playerId}",
+  "gameId": "${gameId}",
+  "choices": [
+    null,
+    1,
+    0,
+    5,
+    0,
+    1
+  ],
+  "answers": [
+    {
+      "format": "number",
+      "number": 9,
+      "from": 0,
+      "result": null
+    },
+    {
+      "format": "decimal"
+    },
+    {
+      "format": "number"
+    },
+    {
+      "format": "number"
+    }
+  ]
+}
