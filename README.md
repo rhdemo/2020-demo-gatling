@@ -6,7 +6,7 @@ properties in `JAVA_OPTS` like the examples below.
 # Running a load test locally
 
 ```shell
-SIMULATION="E2ESimulation" JAVA_OPTS="-Dhost=LIVE -Dusers=1 -Dguesses=10" ./run-gatling.sh
+SIMULATION="E2ESimulation" JAVA_OPTS="-Dhost=DEV -Dusers=1 -Dguesses=10" ./run-gatling.sh
 ```
 
 # Building the load test image

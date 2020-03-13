@@ -34,4 +34,3 @@ popd > /dev/null #gatling-kafka
 
 popd > /dev/null #target
 
-docker build -t quay.io/redhatdemo/2020-load-test $DIR
