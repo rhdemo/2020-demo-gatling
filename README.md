@@ -23,12 +23,6 @@ docker push quay.io/redhatdemo/2020-load-test
 
 # Running in OpenShift
 
-```shell
-oc run load-test -it --rm=true --restart=Never --requests="cpu=2" --image=quay.io/redhatdemo/2020-load-test --image-pull-policy=Always --env="--env="SIMULATION="E2ESimulation" JAVA_OPTS=-Dhost=LIVE -Dusers=50 -Dguesses=15"
+Copy `example.env` to `.env` and change the parameters
 
-# If you want to see the Gatling report, in another terminal:
-oc cp load-test:/results /tmp/e2eresults
-firefox /tmp/e2eresults/*/index.html
-
-# And then, in the original terminal, CTRL+C to kill the load-test pod
-```
+Run `make deploy-load-test` to deploy all the contents

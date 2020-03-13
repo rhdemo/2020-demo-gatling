@@ -18,7 +18,6 @@ class E2ESimulation extends Simulation {
   val BAD_GUESS = "bad.json"
 
   val host: String = sys.env("SOCKET_ADDRESS")
-
   val numUsers: Int = sys.env("USERS").toInt
   val numGuesses: Int = sys.env("GUESSES").toInt
   val percentBadGuesses: Int = sys.env("PERCENT_BAD_GUESSES").toInt 
@@ -106,7 +105,7 @@ class E2ESimulation extends Simulation {
           )
           .exec(session => {
             val guess = session("guess").as[String]
-//            println(guess)
+            println(guess)
             session
           })
           .pause(4 + random.nextInt(3))
