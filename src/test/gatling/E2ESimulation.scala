@@ -11,26 +11,16 @@ import scala.util.parsing.json.JSON
 
 
 class E2ESimulation extends Simulation {
-
-  val DEV = "game-frontend.apps.summit-demo2.openshift.redhatkeynote.com/socket"
-  val LIVE = "game-frontend.apps.summit-demo2.openshift.redhatkeynote.com/socket"
-
   val GUESSES = Array(
     "good.json"
   )
 
   val BAD_GUESS = "bad.json"
 
-  def getHost(arg: String): String = arg match {
-    case "DEV" => DEV
-    case "LIVE" => LIVE
-    case _ => arg
-  }
-
-  val host: String = getHost(System.getProperty("host", LIVE))
-  val numUsers: Int = Integer.getInteger("users", 1).toInt
-  val numGuesses: Int = Integer.getInteger("guesses", 1).toInt
-  val percentBadGuesses: Int = Integer.getInteger("percentBadGuesses", 100).toInt
+  val host: String = sys.env("SOCKET_ADDRESS")
+  val numUsers: Int = sys.env("USERS").toInt
+  val numGuesses: Int = sys.env("GUESSES").toInt
+  val percentBadGuesses: Int = sys.env("PERCENT_BAD_GUESSES").toInt 
 
   val protocol: HttpProtocolBuilder = http
     .baseUrl("http://" + host)
@@ -70,7 +60,7 @@ class E2ESimulation extends Simulation {
             doIfOrElse(session => session("playerId").asOption[String].forall(_.isEmpty)) {
               exec(ws("Connect")
                 .sendText("""{"type": "init"}""")
-                .await(5 seconds)(checkConfiguration))
+                .await(5 seconds)(checkConfiguration))  
             } {
               exec(ws("Reconnect")
                 .sendText("""{"type": "init", "gameId": "${gameId}", "playerId": "${playerId}"}""")
@@ -115,7 +105,7 @@ class E2ESimulation extends Simulation {
           )
           .exec(session => {
             val guess = session("guess").as[String]
-//            println(guess)
+            println(guess)
             session
           })
           .pause(4 + random.nextInt(3))
