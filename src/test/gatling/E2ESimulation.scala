@@ -31,7 +31,7 @@ class E2ESimulation extends Simulation {
     .userAgentHeader("Gatling")
     .wsBaseUrl("ws://" + host)
     .wsReconnect
-    .wsMaxReconnects(1)
+    .wsMaxReconnects(100)
 
   val scn: ScenarioBuilder = scenario("Connection-Scenario")
     .exec(Connection.connect)
@@ -41,7 +41,7 @@ class E2ESimulation extends Simulation {
     .exec(ws("Close").close)
 
   setUp(
-    scn.inject(rampUsers(numUsers) during (5 seconds)).protocols(protocol)
+    scn.inject(rampUsers(numUsers) during (1 seconds)).protocols(protocol)
   )
 
 
@@ -60,11 +60,11 @@ class E2ESimulation extends Simulation {
             doIfOrElse(session => session("playerId").asOption[String].forall(_.isEmpty)) {
               exec(ws("Connect")
                 .sendText("""{"type": "init"}""")
-                .await(5 seconds)(checkConfiguration))  
+                .await(1 seconds)(checkConfiguration))  
             } {
               exec(ws("Reconnect")
                 .sendText("""{"type": "init", "gameId": "${gameId}", "playerId": "${playerId}"}""")
-                .await(5 seconds)(checkConfiguration))
+                .await(1 seconds)(checkConfiguration))
             }
           ))
   }
@@ -101,14 +101,14 @@ class E2ESimulation extends Simulation {
         })
           .exec(ws("Guess")
             .sendText(ElFileBody("${guess}"))
-            .await(7 seconds)(checkGuess)
+            .await(1 seconds)(checkGuess)
           )
           .exec(session => {
             val guess = session("guess").as[String]
             println(guess)
             session
           })
-          .pause(4 + random.nextInt(3))
+          .pause(1 + random.nextInt(3))
       }
   }
 
