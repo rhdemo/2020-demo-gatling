@@ -108,7 +108,7 @@ class E2ESimulation extends Simulation {
             println(guess)
             session
           })
-          .pause(1 + random.nextInt(3))
+          .pause(1)
       }
   }
 
