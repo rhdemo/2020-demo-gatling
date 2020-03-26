@@ -31,7 +31,7 @@ class E2ESimulation extends Simulation {
     .userAgentHeader("Gatling")
     .wsBaseUrl("ws://" + host)
     .wsReconnect
-    .wsMaxReconnects(1)
+    .wsMaxReconnects(100)
 
   val scn: ScenarioBuilder = scenario("Connection-Scenario")
     .exec(Connection.connect)
@@ -101,14 +101,14 @@ class E2ESimulation extends Simulation {
         })
           .exec(ws("Guess")
             .sendText(ElFileBody("${guess}"))
-            .await(7 seconds)(checkGuess)
+            .await(1 seconds)(checkGuess)
           )
           .exec(session => {
             val guess = session("guess").as[String]
             println(guess)
             session
           })
-          .pause(4 + random.nextInt(3))
+          .pause(1)
       }
   }
 
