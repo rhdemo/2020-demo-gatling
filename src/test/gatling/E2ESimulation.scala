@@ -41,7 +41,7 @@ class E2ESimulation extends Simulation {
     .exec(ws("Close").close)
 
   setUp(
-    scn.inject(rampUsers(numUsers) during (1 seconds)).protocols(protocol)
+    scn.inject(rampUsers(numUsers) during (5 seconds)).protocols(protocol)
   )
 
 
@@ -60,11 +60,11 @@ class E2ESimulation extends Simulation {
             doIfOrElse(session => session("playerId").asOption[String].forall(_.isEmpty)) {
               exec(ws("Connect")
                 .sendText("""{"type": "init"}""")
-                .await(1 seconds)(checkConfiguration))  
+                .await(5 seconds)(checkConfiguration))  
             } {
               exec(ws("Reconnect")
                 .sendText("""{"type": "init", "gameId": "${gameId}", "playerId": "${playerId}"}""")
-                .await(1 seconds)(checkConfiguration))
+                .await(5 seconds)(checkConfiguration))
             }
           ))
   }
