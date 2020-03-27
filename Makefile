@@ -19,7 +19,7 @@ clean-namespace: oc_login
 	while oc get project ${NAMESPACE} &> /dev/null;do echo \"Waiting for ${NAMESPACE} to be deleted\";sleep 10;done
 
 run-locally:
-	docker run --rm=true  -e GUESSES=${GUESSES} -e SOCKET_ADDRESS=${SOCKET_ADDRESS} -e USERS=${USERS} -e PERCENT_BAD_GUESSES=${PERCENT_BAD_GUESSES}  -e SIMULATION=E2ESimulation quay.io/redhatdemo/2020-load-test
+	docker run --rm=true  -e GUESSES=${GUESSES} -e SOCKET_ADDRESS=${SOCKET_ADDRESS} -e USERS=${USERS} -e PERCENT_BAD_GUESSES=${PERCENT_BAD_GUESSES}  -e SIMULATION=${SIMULATION} ${IMAGE}
 
 
 deploy-load-test: oc_login clean-namespace
