@@ -99,14 +99,14 @@ class BonusSimulation extends Simulation {
         })
           .exec(ws("Guess")
             .sendText(ElFileBody("${guess}"))
-            .await(7 seconds)(checkGuess)
+            .await(1 seconds)(checkGuess)
           )
           .exec(session => {
             val guess = session("guess").as[String]
-//            println(guess)
+            println(guess)
             session
           })
-          .pause(4 + random.nextInt(3))
+          .pause(1)
       }
   }
 
