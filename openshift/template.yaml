@@ -15,7 +15,7 @@ objects:
     users: ${USERS}
     guesses: ${GUESSES}
     percent_bad_guesses: ${PERCENT_BAD_GUESSES}
-    simulation: 'E2ESimulation'
+    simulation: '${SIMULATION}'
 - kind: Job
   apiVersion: batch/v1
   metadata:
@@ -88,3 +88,8 @@ parameters:
   displayName: IMAGE
   name: IMAGE
   required: true
+- description: SIMULATION
+  displayName: SIMULATION
+  name: SIMULATION
+  required: true
+

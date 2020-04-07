@@ -13,15 +13,21 @@ build-image:
 push-image:
 	@echo Push Image
 	docker push ${IMAGE}
-
-clean-namespace: oc_login
+	
+delete-namespace: 
 	oc delete project ${NAMESPACE} --ignore-not-found=true 
-	while oc get project ${NAMESPACE} &> /dev/null;do echo \"Waiting for ${NAMESPACE} to be deleted\";sleep 10;done
+
+create-namespace: 
+	oc new-project ${NAMESPACE}
 
 run-locally:
 	docker run --rm=true  -e GUESSES=${GUESSES} -e SOCKET_ADDRESS=${SOCKET_ADDRESS} -e USERS=${USERS} -e PERCENT_BAD_GUESSES=${PERCENT_BAD_GUESSES}  -e SIMULATION=${SIMULATION} ${IMAGE}
 
+deploy-load-test:  
+	oc project ${NAMESPACE}
+	oc process -f openshift/template.yaml -p $ USERS=${USERS} NAMESPACE=${NAMESPACE} GUESSES=${GUESSES} PERCENT_BAD_GUESSES=${PERCENT_BAD_GUESSES} IMAGE=${IMAGE} REPLICAS=${REPLICAS} SOCKET_ADDRESS=${SOCKET_ADDRESS} SIMULATION=${SIMULATION} | oc apply -f -
 
-deploy-load-test: oc_login clean-namespace
-	oc new-project ${NAMESPACE}
-	oc process -f openshift/template.yaml -p $ USERS=${USERS} NAMESPACE=${NAMESPACE} GUESSES=${GUESSES} PERCENT_BAD_GUESSES=${PERCENT_BAD_GUESSES} IMAGE=${IMAGE} REPLICAS=${REPLICAS} SOCKET_ADDRESS=${SOCKET_ADDRESS} | oc apply -f -
+
+remove-load-test:
+	oc project ${NAMESPACE}
+	oc process -f openshift/template.yaml -p $ USERS=${USERS} NAMESPACE=${NAMESPACE} GUESSES=${GUESSES} PERCENT_BAD_GUESSES=${PERCENT_BAD_GUESSES} IMAGE=${IMAGE} REPLICAS=${REPLICAS} SOCKET_ADDRESS=${SOCKET_ADDRESS} SIMULATION=${SIMULATION} | oc delete -f -
