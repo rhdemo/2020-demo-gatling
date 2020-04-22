@@ -2,8 +2,8 @@
   "type": "guess",
   "itemId": 0,
   "playerId": "${playerId}",
-  "requestId": "",
   "gameId": "${gameId}",
+  "playerKey": "${playerKey}",
   "number":0,
   "source":2,
   "destination":0

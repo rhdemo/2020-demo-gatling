@@ -18,7 +18,7 @@ class BonusSimulation extends Simulation {
   val BAD_GUESS = "handwritten-0.json"
 
   val host: String = sys.env("SOCKET_ADDRESS")
-
+  val wsProtocol: String = sys.env("WS_PROTOCOL")
   val numUsers: Int = sys.env("USERS").toInt
   val numGuesses: Int = sys.env("GUESSES").toInt
 
@@ -29,7 +29,7 @@ class BonusSimulation extends Simulation {
     .acceptLanguageHeader("en-US,en;q=0.5")
     .acceptEncodingHeader("gzip, deflate")
     .userAgentHeader("Gatling")
-    .wsBaseUrl("ws://" + host)
+    .wsBaseUrl(wsProtocol + "://" + host)
     .wsReconnect
     .wsMaxReconnects(1)
 
@@ -52,6 +52,7 @@ class BonusSimulation extends Simulation {
       )
       .check(
         jsonPath("$.player.id").saveAs("playerId"),
+        jsonPath("$.player.key").saveAs("playerKey"),
         jsonPath("$.game.id").saveAs("gameId")
       )
     val connect: ChainBuilder =
@@ -63,7 +64,7 @@ class BonusSimulation extends Simulation {
                 .await(5 seconds)(checkConfiguration))  
             } {
               exec(ws("Reconnect")
-                .sendText("""{"type": "init", "gameId": "${gameId}", "playerId": "${playerId}"}""")
+                .sendText("""{"type": "init", "gameId": "${gameId}", "playerId": "${playerId}", "playerKey": "${playerKey}"}""")
                 .await(5 seconds)(checkConfiguration))
             }
           ))

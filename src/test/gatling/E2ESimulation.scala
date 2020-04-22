@@ -20,6 +20,7 @@ class E2ESimulation extends Simulation {
   val host: String = sys.env("SOCKET_ADDRESS")
   val numUsers: Int = sys.env("USERS").toInt
   val numGuesses: Int = sys.env("GUESSES").toInt
+  val wsProtocol: String = sys.env("WS_PROTOCOL")
   val percentBadGuesses: Int = sys.env("PERCENT_BAD_GUESSES").toInt 
 
   val protocol: HttpProtocolBuilder = http
@@ -29,7 +30,7 @@ class E2ESimulation extends Simulation {
     .acceptLanguageHeader("en-US,en;q=0.5")
     .acceptEncodingHeader("gzip, deflate")
     .userAgentHeader("Gatling")
-    .wsBaseUrl("ws://" + host)
+    .wsBaseUrl(wsProtocol + "://" + host)
     .wsReconnect
     .wsMaxReconnects(100)
 
@@ -52,7 +53,8 @@ class E2ESimulation extends Simulation {
       )
       .check(
         jsonPath("$.player.id").saveAs("playerId"),
-        jsonPath("$.game.id").saveAs("gameId")
+        jsonPath("$.game.id").saveAs("gameId"),
+        jsonPath("$.player.key").saveAs("playerKey")
       )
     val connect: ChainBuilder =
         exec(ws("Connect to /socket").connect("")
@@ -63,7 +65,7 @@ class E2ESimulation extends Simulation {
                 .await(5 seconds)(checkConfiguration))  
             } {
               exec(ws("Reconnect")
-                .sendText("""{"type": "init", "gameId": "${gameId}", "playerId": "${playerId}"}""")
+                .sendText("""{"type": "init", "gameId": "${gameId}", "playerId": "${playerId}", "playerKey": "${playerKey}"}""")
                 .await(5 seconds)(checkConfiguration))
             }
           ))
@@ -72,7 +74,6 @@ class E2ESimulation extends Simulation {
 
   object Guess {
 
-    private val random = new Random()
 
     val checkGuess = ws.checkTextMessage("checkGuess")
       .matching(
@@ -86,7 +87,8 @@ class E2ESimulation extends Simulation {
     val guess: ChainBuilder =
       repeat(numGuesses, "attempts") {
         exec(session => {
-          val uuid = UUID.randomUUID().toString
+          val requestId = UUID.randomUUID().toString
+          val random = new Random()
           var guess = GUESSES(random.nextInt(GUESSES.length))
 
           // Check if we should instead do a bad guess
@@ -101,7 +103,7 @@ class E2ESimulation extends Simulation {
         })
           .exec(ws("Guess")
             .sendText(ElFileBody("${guess}"))
-            .await(1 seconds)(checkGuess)
+            .await(10 seconds)(checkGuess)
           )
           .exec(session => {
             val guess = session("guess").as[String]
