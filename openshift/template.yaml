@@ -15,7 +15,8 @@ objects:
     users: ${USERS}
     guesses: ${GUESSES}
     percent_bad_guesses: ${PERCENT_BAD_GUESSES}
-    simulation: 'E2ESimulation'
+    simulation: '${SIMULATION}'
+    WS_PROTOCOL: '${WS_PROTOCOL}'
 - kind: Job
   apiVersion: batch/v1
   metadata:
@@ -57,6 +58,11 @@ objects:
                   configMapKeyRef:
                     name: load-configmap
                     key: simulation
+              - name: WS_PROTOCOL
+                valueFrom:
+                  configMapKeyRef:
+                    name: load-configmap
+                    key: ws_protocol
             imagePullPolicy: Always
         restartPolicy: OnFailure
 parameters:
@@ -88,3 +94,12 @@ parameters:
   displayName: IMAGE
   name: IMAGE
   required: true
+- description: SIMULATION
+  displayName: SIMULATION
+  name: SIMULATION
+  required: true  
+- description: WS_PROTOCOL
+  displayName: WS_PROTOCOL
+  name: WS_PROTOCOL
+  required: true
+
